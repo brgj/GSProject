@@ -1,1 +1,1 @@
-Ess is stupid
+FUCK YOU ASS HOLE
