@@ -1,7 +1,16 @@
 package gui;
 
+import character.Input;
+import character.Player;
+
+import javax.imageio.ImageIO;
 import javax.swing.*;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.util.Stack;
 
 /**
  * Created with IntelliJ IDEA.
@@ -13,9 +22,11 @@ import java.awt.image.BufferedImage;
 public class Window extends JFrame {
     int[][] map;
     ImagePanel image;
+    Stack<Integer> keyStack;
 
     public Window() {
         initComponents();
+        createEntities();
 
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
     }
@@ -24,12 +35,17 @@ public class Window extends JFrame {
         int[] RGB;
 
         map = new int[][]{
-                {1, 0, 0, 0, 0, 0},
-                {1, 1, 0, 0, 0, 0},
-                {1, 1, 1, 0, 0, 0},
-                {1, 1, 1, 1, 0, 0},
-                {1, 1, 1, 1, 1, 0}
+                {0,0,0,1,0,0,1,1,1,0,0,0,0},
+                {0,1,0,0,0,1,0,0,0,0,1,1,0},
+                {1,1,1,1,0,1,0,1,0,1,0,1,1},
+                {0,0,0,1,0,0,0,1,0,1,0,0,0},
+                {0,1,0,1,1,1,1,0,0,0,1,1,0},
+                {0,1,0,0,0,0,0,0,1,0,0,0,0},
+                {0,1,1,1,1,1,1,1,1,1,1,1,1},
+                {0,0,0,0,0,0,0,0,0,0,0,0,0}
         };
+
+        keyStack = new Stack<Integer>();
 
         BufferedImage img = new BufferedImage(500, 500, BufferedImage.TYPE_INT_RGB);
 
@@ -46,15 +62,80 @@ public class Window extends JFrame {
 
         img.setRGB(0, 0, img.getWidth(), img.getHeight(), RGB, 0, img.getWidth());
 
-        image = new ImagePanel(img);
+        image = new ImagePanel(img, 500 / map[0].length, 500 / map.length);
 
         add(image);
+
+        addKeyListener(new KeyListener() {
+            @Override
+            public void keyTyped(KeyEvent e) {
+                //To change body of implemented methods use File | Settings | File Templates.
+            }
+
+            @Override
+            public void keyPressed(KeyEvent e) {
+                keyStack.push(e.getKeyCode());
+            }
+
+            @Override
+            public void keyReleased(KeyEvent e) {
+                //To change body of implemented methods use File | Settings | File Templates.
+            }
+        });
 
         pack();
     }
 
+    //TODO: clean this up a lot
+    public void createEntities() {
+        BufferedImage img;
+        try {
+            img = ImageIO.read(new File("/home/brad/GSProject/src/images/abc.jpeg"));
+        } catch (IOException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            return;
+        }
+        Player player = new Player(img, new Input() {
+            @Override
+            public int getMovement(int x, int y) {
+                repaint();
+                if (!keyStack.empty()) {
+                    switch (keyStack.pop()) {
+                        case KeyEvent.VK_LEFT:
+                        case KeyEvent.VK_A:
+                            if(map[y][x-1] != 0)
+                                break;
+                            return 1;
+                        case KeyEvent.VK_UP:
+                        case KeyEvent.VK_W:
+                            if(map[y-1][x] != 0)
+                                break;
+                            return 2;
+                        case KeyEvent.VK_RIGHT:
+                        case KeyEvent.VK_D:
+                            if(map[y][x+1] != 0)
+                                break;
+                            return 3;
+                        case KeyEvent.VK_DOWN:
+                        case KeyEvent.VK_S:
+                            if(map[y+1][x] != 0)
+                                break;
+                            return 4;
+                    }
+                }
+                return 0;
+            }
+        });
+
+        image.addEntity(player);
+
+        Thread t = new Thread(player);
+
+        t.start();
+    }
+
     public int getColour(int index) {
-        switch(index) {
+        switch (index) {
             // White
             case 0:
                 return 0xFFFFFF;

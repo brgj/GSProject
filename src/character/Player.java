@@ -9,8 +9,31 @@ import java.awt.image.BufferedImage;
  * Time: 6:48 PM
  * To change this template use File | Settings | File Templates.
  */
-public class Player extends Character {
-    public Player(BufferedImage img) {
+public class Player extends Entity {
+    Input delegate;
+
+    public Player(BufferedImage img, Input input) {
         super(img);
+        delegate = input;
+    }
+
+    public void move() {
+        switch (delegate.getMovement(x, y)) {
+            // Left
+            case 1:
+                x--;
+                return;
+            // Up
+            case 2:
+                y--;
+                return;
+            // Right
+            case 3:
+                x++;
+                return;
+            // Down
+            case 4:
+                y++;
+        }
     }
 }
