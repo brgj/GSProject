@@ -90,7 +90,7 @@ public class Window extends JFrame {
     public void createEntities() {
         BufferedImage img;
         try {
-            img = ImageIO.read(new File("/home/brad/GSProject/src/images/abc.jpeg"));
+            img = ImageIO.read(getClass().getResource("/images/abc.jpeg"));
         } catch (IOException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
             return;
