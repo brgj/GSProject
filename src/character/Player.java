@@ -15,6 +15,8 @@ public class Player extends Entity {
     public Player(BufferedImage img, Input input) {
         super(img);
         delegate = input;
+        x = 1;
+        y = 1;
     }
 
     public void move() {

@@ -5,11 +5,15 @@ import character.Player;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
+import javax.swing.filechooser.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
+import java.util.ArrayList;
+import java.util.Scanner;
 import java.util.Stack;
 
 /**
@@ -21,50 +25,72 @@ import java.util.Stack;
  */
 public class Window extends JFrame {
     int[][] map;
-    ImagePanel image;
+    ImagePanel imagePanel;
+    BufferedImage image;
     Stack<Integer> keyStack;
+
+    private JMenuBar menubar;
+    private JMenu file;
+    private JMenuItem loadMap;
+
+    private JFileChooser fileChooser;
 
     public Window() {
         initComponents();
-        createEntities();
+//        createEntities();
 
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
     }
 
     public void initComponents() {
-        int[] RGB;
 
-        map = new int[][]{
-                {0,0,0,1,0,0,1,1,1,0,0,0,0},
-                {0,1,0,0,0,1,0,0,0,0,1,1,0},
-                {1,1,1,1,0,1,0,1,0,1,0,1,1},
-                {0,0,0,1,0,0,0,1,0,1,0,0,0},
-                {0,1,0,1,1,1,1,0,0,0,1,1,0},
-                {0,1,0,0,0,0,0,0,1,0,0,0,0},
-                {0,1,1,1,1,1,1,1,1,1,1,1,1},
-                {0,0,0,0,0,0,0,0,0,0,0,0,0}
-        };
+        image = new BufferedImage(500, 500, BufferedImage.TYPE_INT_RGB);
 
         keyStack = new Stack<Integer>();
 
-        BufferedImage img = new BufferedImage(500, 500, BufferedImage.TYPE_INT_RGB);
+        menubar = new JMenuBar();
+        file = new JMenu("File");
+        loadMap = new JMenuItem("Load Map");
 
-        RGB = new int[img.getHeight() * img.getWidth()];
+        fileChooser = new JFileChooser();
 
-        for (int y = 0; y < img.getHeight(); y++) {
-            for (int x = 0; x < img.getWidth(); x++) {
-                double yRatio = (double) y / img.getHeight();
-                double xRatio = (double) x / img.getWidth();
+        fileChooser.setFileFilter(new javax.swing.filechooser.FileFilter() {
 
-                RGB[y * img.getWidth() + x] = getColour(map[(int) (map.length * yRatio)][(int) (map[0].length * xRatio)]);
+            @Override
+            public boolean accept(File f) {
+                return f.getName().endsWith(".map") || f.isDirectory();
             }
-        }
 
-        img.setRGB(0, 0, img.getWidth(), img.getHeight(), RGB, 0, img.getWidth());
+            @Override
+            public String getDescription() {
+                return "Map files";
+            }
+        });
 
-        image = new ImagePanel(img, 500 / map[0].length, 500 / map.length);
+        menubar.add(file);
+        file.add(loadMap);
 
-        add(image);
+        this.setJMenuBar(menubar);
+
+        imagePanel = new ImagePanel(image, 0, 0);
+
+        add(imagePanel);
+
+        loadMap.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                fileChooser.setCurrentDirectory(new File(getClass().getResource("/maps/").getFile()));
+                int val = fileChooser.showOpenDialog(imagePanel);
+                if (val == JFileChooser.APPROVE_OPTION) {
+                    File file = fileChooser.getSelectedFile();
+                    try {
+                        createMap(file);
+                    } catch (IOException e1) {
+                        e1.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                    }
+                }
+            }
+        });
 
         addKeyListener(new KeyListener() {
             @Override
@@ -103,22 +129,22 @@ public class Window extends JFrame {
                     switch (keyStack.pop()) {
                         case KeyEvent.VK_LEFT:
                         case KeyEvent.VK_A:
-                            if(map[y][x-1] != 0)
+                            if (map[y][x - 1] != 0)
                                 break;
                             return 1;
                         case KeyEvent.VK_UP:
                         case KeyEvent.VK_W:
-                            if(map[y-1][x] != 0)
+                            if (map[y - 1][x] != 0)
                                 break;
                             return 2;
                         case KeyEvent.VK_RIGHT:
                         case KeyEvent.VK_D:
-                            if(map[y][x+1] != 0)
+                            if (map[y][x + 1] != 0)
                                 break;
                             return 3;
                         case KeyEvent.VK_DOWN:
                         case KeyEvent.VK_S:
-                            if(map[y+1][x] != 0)
+                            if (map[y + 1][x] != 0)
                                 break;
                             return 4;
                     }
@@ -127,10 +153,11 @@ public class Window extends JFrame {
             }
         });
 
-        image.addEntity(player);
+        imagePanel.addEntity(player);
 
         Thread t = new Thread(player);
 
+        // TODO: need to kill this thread when game reload
         t.start();
     }
 
@@ -157,5 +184,53 @@ public class Window extends JFrame {
             default:
                 return 0;
         }
+    }
+
+    public void createMap(File file) throws IOException {
+        ArrayList<int[]> mapList = new ArrayList<int[]>();
+        Scanner scan = new Scanner(file, "UTF-8");
+        while (scan.hasNext()) {
+            String str = scan.nextLine();
+            Scanner line = new Scanner(str);
+            int[] buffer = new int[str.length()];
+            int i = 0;
+
+            while (line.hasNext()) {
+                buffer[i++] = Integer.parseInt(line.next());
+            }
+
+            int[] row = new int[i];
+
+            System.arraycopy(buffer, 0, row, 0, i);
+
+            mapList.add(row);
+        }
+
+        map = mapList.toArray(new int[0][]);
+
+        int[] RGB = new int[image.getHeight() * image.getWidth()];
+
+        for (int y = 0; y < image.getHeight(); y++) {
+            for (int x = 0; x < image.getWidth(); x++) {
+                double yRatio = (double) y / image.getHeight();
+                double xRatio = (double) x / image.getWidth();
+
+                RGB[y * image.getWidth() + x] = getColour(map[(int) (map.length * yRatio)][(int) (map[0].length * xRatio)]);
+            }
+        }
+
+        image.setRGB(0, 0, image.getWidth(), image.getHeight(), RGB, 0, image.getWidth());
+
+        remove(imagePanel);
+
+        imagePanel = new ImagePanel(image, 500 / map[0].length, 500 / map.length);
+
+        add(imagePanel);
+
+        pack();
+
+        createEntities();
+
+        repaint();
     }
 }
