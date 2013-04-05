@@ -223,7 +223,7 @@ public class Window extends JFrame {
 
         remove(imagePanel);
 
-        imagePanel = new ImagePanel(image, 500 / map[0].length, 500 / map.length);
+        imagePanel = new ImagePanel(image, (double)500 / map[0].length, (double)500 / map.length);
 
         add(imagePanel);
 
