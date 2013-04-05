@@ -40,7 +40,7 @@ public class ImagePanel extends JPanel {
     public void paint(Graphics g) {
         g.drawImage(image, 0, 0, null);
         for(Entity e : entityList) {
-            g.drawImage(e.sprite, (int)(e.getX() * xBlockSize), (int)(e.getY() * yBlockSize), null);
+            g.drawImage(e.sprite, (int)(e.getX() * xBlockSize + 0.5), (int)(e.getY() * yBlockSize + 0.5), null);
         }
     }
 }
