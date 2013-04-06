@@ -6,7 +6,6 @@ import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -67,8 +66,10 @@ public class Window extends JFrame {
 
         try {
             Thing.playerImg = ImageIO.read(getClass().getResource("/images/abc.jpeg"));
-            Thing.enemyImg = ImageIO.read(getClass().getResource("/images/def.jpeg"));
-            Thing.bombImg = ImageIO.read(getClass().getResource("/images/ghi.jpeg"));
+            Thing.deadImg = ImageIO.read(getClass().getResource("/images/def.jpeg"));
+            Thing.enemyImg = ImageIO.read(getClass().getResource("/images/jkl.jpeg"));
+            Thing.bombImg = ImageIO.read(getClass().getResource("/images/bomb.png"));
+            Thing.explosionImg = ImageIO.read(getClass().getResource("/images/explosion.png"));
         } catch (IOException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
             return;

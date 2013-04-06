@@ -2,9 +2,7 @@ package core;
 
 import helpers.Delegate;
 import helpers.Helper;
-import objects.Bomb;
-import objects.Enemy;
-import objects.Player;
+import objects.*;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -23,6 +21,7 @@ public class World implements Runnable{
     private Player player;
     private List<Enemy> enemies;
     private List<Bomb> bombs;
+    private List<Explosion> explosions;
 
     public boolean exists;
 
@@ -31,6 +30,7 @@ public class World implements Runnable{
         delegate = d;
         enemies = new ArrayList<Enemy>();
         bombs = new ArrayList<Bomb>();
+        explosions = new ArrayList<Explosion>();
         exists = true;
         setPlayer();
     }
@@ -65,6 +65,15 @@ public class World implements Runnable{
         bombs.add(b);
     }
 
+    public List<Explosion> getExplosions() {
+        return explosions;
+    }
+
+    public void addExplosion(Explosion e) {
+        e.sprite = Helper.resizeImage(e.sprite);
+        explosions.add(e);
+    }
+
     public void playerAction(int action, int[][] activeMap) {
         int y = player.getY();
         int x = player.getX();
@@ -72,28 +81,30 @@ public class World implements Runnable{
         if(activeMap[y][x] == -2) {
             player.kill();
             exists = false;
+            player.sprite = Thing.deadImg;
+            player.sprite = Helper.resizeImage(player.sprite);
             return;
         }
 
         switch(action) {
             // Left
             case 1:
-                if(activeMap[y][x-1] == 0)
+                if(activeMap[y][x-1] <= 0)
                     player.move(1);
                 break;
             // Up
             case 2:
-                if(activeMap[y-1][x] == 0)
+                if(activeMap[y-1][x] <= 0)
                     player.move(2);
                 break;
             // Right
             case 3:
-                if(activeMap[y][x+1] == 0)
+                if(activeMap[y][x+1] <= 0)
                     player.move(3);
                 break;
             // Down
             case 4:
-                if(activeMap[y+1][x] == 0)
+                if(activeMap[y+1][x] <= 0)
                     player.move(4);
                 break;
             // Bomb
@@ -103,18 +114,25 @@ public class World implements Runnable{
         }
     }
 
-    public void destroyBlocks(Point[] points) {
+    public void explode(Point[] points) {
         for(Point p : points) {
             map[p.y][p.x] = 0;
+            addExplosion(new Explosion(p.x, p.y));
         }
     }
 
     public int[][] getActiveMap() {
         int[][] activeMap = new int[map.length][map[0].length];
 
-        System.arraycopy(map, 0, activeMap, 0, map.length);
+        for(int i = 0; i < map.length; i++) {
+            System.arraycopy(map[i], 0, activeMap[i], 0, map[i].length);
+        }
 
         for(Enemy e : enemies) {
+            activeMap[e.getY()][e.getX()] = -2;
+        }
+
+        for(Explosion e : explosions) {
             activeMap[e.getY()][e.getX()] = -2;
         }
 
@@ -124,6 +142,24 @@ public class World implements Runnable{
     public void step() {
         int[][] activeMap = getActiveMap();
         boolean mapChanged = false;
+
+        for(int i = 0; i < explosions.size(); i++) {
+            Explosion e = explosions.get(i);
+            if(e.isDestroyed()) {
+                explosions.remove(i);
+                i--;
+            }
+        }
+
+        for(int i = 0; i < bombs.size(); i++) {
+            Bomb b = bombs.get(i);
+            if(b.isDestroyed()) {
+                mapChanged = true;
+                explode(b.blowUp());
+                bombs.remove(i);
+                i--;
+            }
+        }
 
         playerAction(delegate.getInput(), activeMap);
 
@@ -135,16 +171,6 @@ public class World implements Runnable{
                 continue;
             }
             e.move(e.calcPath(activeMap));
-        }
-
-        for(int i = 0; i < bombs.size(); i++) {
-            Bomb b = bombs.get(i);
-            if(b.isDestroyed()) {
-                mapChanged = true;
-                destroyBlocks(b.blowUp());
-                bombs.remove(i);
-                i--;
-            }
         }
 
         if(mapChanged)

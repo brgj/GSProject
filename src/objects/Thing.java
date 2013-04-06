@@ -11,8 +11,10 @@ import java.awt.image.BufferedImage;
  */
 public abstract class Thing {
     public static BufferedImage playerImg;
+    public static BufferedImage deadImg;
     public static BufferedImage enemyImg;
     public static BufferedImage bombImg;
+    public static BufferedImage explosionImg;
 
     public BufferedImage sprite;
     protected int x, y;

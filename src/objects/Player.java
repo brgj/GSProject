@@ -1,7 +1,5 @@
 package objects;
 
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
-
 /**
  * Created with IntelliJ IDEA.
  * User: brad
@@ -38,6 +36,6 @@ public class Player extends Entity {
     }
 
     public Bomb setBomb() {
-        return new Bomb(500, x, y);
+        return new Bomb(1000, x, y);
     }
 }

@@ -3,9 +3,7 @@ package gui;
 import core.World;
 import helpers.Delegate;
 import helpers.Helper;
-import objects.Enemy;
-import objects.Item;
-import objects.Player;
+import objects.*;
 
 import javax.swing.*;
 import java.awt.*;
@@ -162,11 +160,15 @@ public class ImagePanel extends JPanel {
         Player p = world.getPlayer();
         g.drawImage(p.sprite, (int) (p.getX() * Helper.xBlockSize + 0.5), (int) (p.getY() * Helper.yBlockSize + 0.5), null);
 
-        for (Item i : world.getBombs()) {
-            g.drawImage(i.sprite, (int) (i.getX() * Helper.xBlockSize + 0.5), (int) (i.getY() * Helper.yBlockSize + 0.5), null);
+        for (Enemy e : world.getEnemies()) {
+            g.drawImage(e.sprite, (int) (e.getX() * Helper.xBlockSize + 0.5), (int) (e.getY() * Helper.yBlockSize + 0.5), null);
         }
 
-        for (Enemy e : world.getEnemies()) {
+        for (Bomb b : world.getBombs()) {
+            g.drawImage(b.sprite, (int) (b.getX() * Helper.xBlockSize + 0.5), (int) (b.getY() * Helper.yBlockSize + 0.5), null);
+        }
+
+        for(Explosion e : world.getExplosions()) {
             g.drawImage(e.sprite, (int) (e.getX() * Helper.xBlockSize + 0.5), (int) (e.getY() * Helper.yBlockSize + 0.5), null);
         }
     }
