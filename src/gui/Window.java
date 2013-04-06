@@ -1,6 +1,5 @@
 package gui;
 
-import helpers.Helper;
 import objects.Thing;
 
 import javax.imageio.ImageIO;

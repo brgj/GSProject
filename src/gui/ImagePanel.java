@@ -12,6 +12,7 @@ import javax.swing.JPanel;
 import java.awt.Graphics;
 import java.awt.Dimension;
 import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.Stack;
@@ -29,7 +30,6 @@ public class ImagePanel extends JPanel {
     Thread wThread;
     Stack<Integer> keyStack;
 
-
     public ImagePanel(int[][] map, BufferedImage img) {
         image = img;
         keyStack = new Stack<Integer>();
@@ -39,7 +39,26 @@ public class ImagePanel extends JPanel {
 
         createWorld(map);
 
+        addKeyListener(new KeyListener() {
+            @Override
+            public void keyTyped(KeyEvent e) {
+                //To change body of implemented methods use File | Settings | File Templates.
+            }
+
+            @Override
+            public void keyPressed(KeyEvent e) {
+                keyStack.push(e.getKeyCode());
+            }
+
+            @Override
+            public void keyReleased(KeyEvent e) {
+                //To change body of implemented methods use File | Settings | File Templates.
+            }
+        });
+
         setPreferredSize(new Dimension(image.getWidth(), image.getHeight()));
+        setFocusable(true);
+        requestFocusInWindow();
     }
 
 
@@ -68,11 +87,13 @@ public class ImagePanel extends JPanel {
 
             public void repaint() {
                 ImagePanel.this.repaint();
+//                wetFart();
             }
         });
         wThread = new Thread(world);
-    }
 
+        wThread.start();
+    }
 
     @Override
     public void paint(Graphics g) {

@@ -134,7 +134,13 @@ public class World implements Runnable{
 
     @Override
     public void run() {
-        while(exists)
+        while(exists) {
+            try {
+                Thread.sleep(35);
+            } catch (InterruptedException e) {
+                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            }
             step();
+        }
     }
 }
