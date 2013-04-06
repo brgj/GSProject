@@ -89,22 +89,22 @@ public class World implements Runnable{
         switch(action) {
             // Left
             case 1:
-                if(activeMap[y][x-1] <= 0)
+                if(x > 0 && activeMap[y][x-1] <= 0)
                     player.move(1);
                 break;
             // Up
             case 2:
-                if(activeMap[y-1][x] <= 0)
+                if(y > 0 && activeMap[y-1][x] <= 0)
                     player.move(2);
                 break;
             // Right
             case 3:
-                if(activeMap[y][x+1] <= 0)
+                if(x < activeMap[y].length - 1 && activeMap[y][x+1] <= 0)
                     player.move(3);
                 break;
             // Down
             case 4:
-                if(activeMap[y+1][x] <= 0)
+                if(y < activeMap.length - 1 && activeMap[y+1][x] <= 0)
                     player.move(4);
                 break;
             // Bomb
@@ -114,7 +114,7 @@ public class World implements Runnable{
         }
     }
 
-    public void explode(Point[] points) {
+    public void explode(List<Point> points) {
         for(Point p : points) {
             map[p.y][p.x] = 0;
             addExplosion(new Explosion(p.x, p.y));
@@ -155,7 +155,7 @@ public class World implements Runnable{
             Bomb b = bombs.get(i);
             if(b.isDestroyed()) {
                 mapChanged = true;
-                explode(b.blowUp());
+                explode(b.blowUp(map[0].length - 1, map.length - 1));
                 bombs.remove(i);
                 i--;
             }

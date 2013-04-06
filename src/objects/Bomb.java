@@ -4,6 +4,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created with IntelliJ IDEA.
@@ -12,8 +14,9 @@ import java.awt.event.ActionListener;
  * Time: 2:32 PM
  * To change this template use File | Settings | File Templates.
  */
-public class Bomb extends Item{
+public class Bomb extends Item {
     Timer t;
+
     public Bomb(int fuse, int x, int y) {
         super(Thing.bombImg);
         this.x = x;
@@ -28,8 +31,24 @@ public class Bomb extends Item{
         t.start();
     }
 
-    public Point[] blowUp() {
-        return new Point[]{new Point(x, y), new Point(x+1, y),
-        new Point(x-1, y), new Point(x, y+1), new Point(x, y-1)};
+    public List<Point> blowUp(int maxX, int maxY) {
+
+        List<Point> points = new ArrayList<Point>();
+
+        points.add(new Point(x, y));
+
+        if (x != 0)
+            points.add(new Point(x - 1, y));
+
+        if (x != maxX)
+            points.add(new Point(x + 1, y));
+
+        if (y != 0)
+            points.add(new Point(x, y - 1));
+
+        if (y != maxY)
+            points.add(new Point(x, y + 1));
+
+        return points;
     }
 }

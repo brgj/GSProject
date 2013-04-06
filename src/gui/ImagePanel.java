@@ -48,7 +48,7 @@ public class ImagePanel extends JPanel {
         Helper.xBlockSize = (double) WIDTH / map[0].length;
         Helper.yBlockSize = (double) HEIGHT / map.length;
 
-        setImage(map);
+        setBackgroundImage(map);
 
         createWorld(map);
 
@@ -102,7 +102,7 @@ public class ImagePanel extends JPanel {
 
             @Override
             public void setBackgroundImage(int[][] map) {
-                setImage(map);
+                ImagePanel.this.setBackgroundImage(map);
             }
         });
         wThread = new Thread(world);
@@ -110,7 +110,7 @@ public class ImagePanel extends JPanel {
         wThread.start();
     }
 
-    public void setImage(int[][] map) {
+    public void setBackgroundImage(int[][] map) {
         int[] RGB = new int[HEIGHT * WIDTH];
 
         for (int y = 0; y < HEIGHT; y++) {
