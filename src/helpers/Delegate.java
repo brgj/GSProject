@@ -12,4 +12,6 @@ public interface Delegate {
     public int getInput();
 
     public void repaint();
+
+    public void setBackgroundImage(int[][] map);
 }

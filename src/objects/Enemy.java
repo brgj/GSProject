@@ -2,8 +2,6 @@ package objects;
 
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
-import java.awt.image.BufferedImage;
-
 /**
  * Created with IntelliJ IDEA.
  * User: brad

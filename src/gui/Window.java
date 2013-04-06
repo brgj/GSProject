@@ -7,7 +7,8 @@ import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -21,7 +22,6 @@ import java.util.Scanner;
 public class Window extends JFrame {
     int[][] map;
     ImagePanel imagePanel;
-    BufferedImage image;
 
     private JMenuBar menubar;
     private JMenu file;
@@ -36,7 +36,6 @@ public class Window extends JFrame {
     }
 
     public void initComponents() {
-        image = new BufferedImage(500, 500, BufferedImage.TYPE_INT_RGB);
 
         menubar = new JMenuBar();
         file = new JMenu("File");
@@ -62,7 +61,7 @@ public class Window extends JFrame {
 
         this.setJMenuBar(menubar);
 
-        imagePanel = new ImagePanel(new int[20][20], image);
+        imagePanel = new ImagePanel();
 
         add(imagePanel);
 
@@ -94,31 +93,6 @@ public class Window extends JFrame {
         pack();
     }
 
-    public int getColour(int index) {
-        switch (index) {
-            // White
-            case 0:
-                return 0xFFFFFF;
-            // Black
-            case 1:
-                return 0;
-            // Red
-            case 2:
-                return 0xFF0000;
-            // Green
-            case 3:
-                return 0x00FF00;
-            // Blue
-            case 4:
-                return 0x0000FF;
-            // Stupid colour
-            case 5:
-                return 0x5EDA9E;
-            default:
-                return 0;
-        }
-    }
-
     public void createMap(File file) throws IOException {
         ArrayList<int[]> mapList = new ArrayList<int[]>();
         Scanner scan = new Scanner(file, "UTF-8");
@@ -141,24 +115,11 @@ public class Window extends JFrame {
 
         map = mapList.toArray(new int[0][]);
 
-        int[] RGB = new int[image.getHeight() * image.getWidth()];
-
-        for (int y = 0; y < image.getHeight(); y++) {
-            for (int x = 0; x < image.getWidth(); x++) {
-                double yRatio = (double) y / image.getHeight();
-                double xRatio = (double) x / image.getWidth();
-
-                RGB[y * image.getWidth() + x] = getColour(map[(int) (map.length * yRatio)][(int) (map[0].length * xRatio)]);
-            }
-        }
-
-        image.setRGB(0, 0, image.getWidth(), image.getHeight(), RGB, 0, image.getWidth());
-
         // TODO: Destroy world before removing panel
 
         remove(imagePanel);
 
-        imagePanel = new ImagePanel(map, image);
+        imagePanel = new ImagePanel(map);
 
         add(imagePanel);
 

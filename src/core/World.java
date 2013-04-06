@@ -2,10 +2,11 @@ package core;
 
 import helpers.Delegate;
 import helpers.Helper;
+import objects.Bomb;
 import objects.Enemy;
-import objects.Item;
 import objects.Player;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,7 +22,7 @@ public class World implements Runnable{
     private Delegate delegate;
     private Player player;
     private List<Enemy> enemies;
-    private List<Item> items;
+    private List<Bomb> bombs;
 
     public boolean exists;
 
@@ -29,7 +30,7 @@ public class World implements Runnable{
         map = m;
         delegate = d;
         enemies = new ArrayList<Enemy>();
-        items = new ArrayList<Item>();
+        bombs = new ArrayList<Bomb>();
         exists = true;
         setPlayer();
     }
@@ -54,14 +55,14 @@ public class World implements Runnable{
         enemies.add(e);
     }
 
-    public List<Item> getItems() {
-        return items;
+    public List<Bomb> getBombs() {
+        return bombs;
     }
 
     // Resizes sprite to block size and adds item to list
-    public void addItem(Item i) {
-        i.sprite = Helper.resizeImage(i.sprite);
-        items.add(i);
+    public void addBomb(Bomb b) {
+        b.sprite = Helper.resizeImage(b.sprite);
+        bombs.add(b);
     }
 
     public void playerAction(int action, int[][] activeMap) {
@@ -97,8 +98,14 @@ public class World implements Runnable{
                 break;
             // Bomb
             case 5:
-                player.setBomb();
+                addBomb(player.setBomb());
                 break;
+        }
+    }
+
+    public void destroyBlocks(Point[] points) {
+        for(Point p : points) {
+            map[p.y][p.x] = 0;
         }
     }
 
@@ -116,6 +123,7 @@ public class World implements Runnable{
 
     public void step() {
         int[][] activeMap = getActiveMap();
+        boolean mapChanged = false;
 
         playerAction(delegate.getInput(), activeMap);
 
@@ -128,6 +136,19 @@ public class World implements Runnable{
             }
             e.move(e.calcPath(activeMap));
         }
+
+        for(int i = 0; i < bombs.size(); i++) {
+            Bomb b = bombs.get(i);
+            if(b.isDestroyed()) {
+                mapChanged = true;
+                destroyBlocks(b.blowUp());
+                bombs.remove(i);
+                i--;
+            }
+        }
+
+        if(mapChanged)
+            delegate.setBackgroundImage(map);
 
         delegate.repaint();
     }
