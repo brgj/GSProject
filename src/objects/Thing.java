@@ -1,20 +1,24 @@
-package character;
+package objects;
 
 import java.awt.image.BufferedImage;
 
 /**
  * Created with IntelliJ IDEA.
  * User: brad
- * Date: 4/4/13
- * Time: 6:24 PM
+ * Date: 4/5/13
+ * Time: 2:19 PM
  * To change this template use File | Settings | File Templates.
  */
-public abstract class Entity implements Runnable{
+public abstract class Thing {
+    public static BufferedImage playerImg;
+    public static BufferedImage enemyImg;
+    public static BufferedImage bombImg;
+
     public BufferedImage sprite;
     protected int x, y;
-    protected boolean dead;
+    protected boolean destroyed;
 
-    public Entity(BufferedImage img) {
+    public Thing(BufferedImage img) {
         sprite = img;
     }
 
@@ -26,12 +30,7 @@ public abstract class Entity implements Runnable{
         return y;
     }
 
-    public abstract void move();
-
-    @Override
-    public void run() {
-        while(!dead) {
-            move();
-        }
+    public boolean isDestroyed() {
+        return destroyed;
     }
 }

@@ -1,13 +1,20 @@
 package gui;
 
-import character.Entity;
+import core.World;
+import helpers.Delegate;
+import helpers.Helper;
+import objects.Enemy;
+import objects.Item;
+import objects.Player;
 
+import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 import java.awt.Graphics;
 import java.awt.Dimension;
+import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
-import java.util.List;
-import java.util.ArrayList;
+import java.io.IOException;
+import java.util.Stack;
 
 /**
  * Created with IntelliJ IDEA.
@@ -18,29 +25,68 @@ import java.util.ArrayList;
  */
 public class ImagePanel extends JPanel {
     private BufferedImage image;
-    private double xBlockSize, yBlockSize;
-    private List<Entity> entityList;
+    World world;
+    Thread wThread;
+    Stack<Integer> keyStack;
 
-    public ImagePanel(BufferedImage img, double xBlkSize, double yBlkSize) {
+
+    public ImagePanel(int[][] map, BufferedImage img) {
         image = img;
-        xBlockSize = xBlkSize;
-        yBlockSize = yBlkSize;
+        keyStack = new Stack<Integer>();
+
+        Helper.xBlockSize = (double) 500 / map[0].length;
+        Helper.yBlockSize = (double) 500 / map.length;
+
+        createWorld(map);
 
         setPreferredSize(new Dimension(image.getWidth(), image.getHeight()));
-        entityList = new ArrayList<Entity>();
     }
 
-    // Resizes sprite to block size and adds entity to list
-    public void addEntity(Entity e) {
-        e.sprite = Helper.resizeImage(e.sprite, (int)xBlockSize, (int)yBlockSize);
-        entityList.add(e);
+
+    public void createWorld(int[][] map) {
+        world = new World(map, new Delegate() {
+            @Override
+            public int getInput() {
+                if (!keyStack.empty()) {
+                    switch (keyStack.pop()) {
+                        case KeyEvent.VK_LEFT:
+                        case KeyEvent.VK_A:
+                            return 1;
+                        case KeyEvent.VK_UP:
+                        case KeyEvent.VK_W:
+                            return 2;
+                        case KeyEvent.VK_RIGHT:
+                        case KeyEvent.VK_D:
+                            return 3;
+                        case KeyEvent.VK_DOWN:
+                        case KeyEvent.VK_S:
+                            return 4;
+                    }
+                }
+                return 0;
+            }
+
+            public void repaint() {
+                ImagePanel.this.repaint();
+            }
+        });
+        wThread = new Thread(world);
     }
+
 
     @Override
     public void paint(Graphics g) {
         g.drawImage(image, 0, 0, null);
-        for(Entity e : entityList) {
-            g.drawImage(e.sprite, (int)(e.getX() * xBlockSize + 0.5), (int)(e.getY() * yBlockSize + 0.5), null);
+
+        for(Item i : world.getItems()) {
+            g.drawImage(i.sprite, (int)(i.getX() * Helper.xBlockSize + 0.5), (int)(i.getY() * Helper.yBlockSize + 0.5), null);
         }
+
+        for(Enemy e : world.getEnemies()) {
+            g.drawImage(e.sprite, (int)(e.getX() * Helper.xBlockSize + 0.5), (int)(e.getY() * Helper.yBlockSize + 0.5), null);
+        }
+
+        Player p = world.getPlayer();
+        g.drawImage(p.sprite, (int)(p.getX() * Helper.xBlockSize + 0.5), (int)(p.getY() * Helper.yBlockSize + 0.5), null);
     }
 }

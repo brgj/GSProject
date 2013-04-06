@@ -1,4 +1,4 @@
-package gui;
+package helpers;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -12,6 +12,8 @@ import java.awt.image.BufferedImage;
  */
 public class Helper {
 
+    public static double xBlockSize, yBlockSize;
+
     private Helper() {
 
     }
@@ -20,17 +22,14 @@ public class Helper {
      * resizes the image passed in and returns a copy
      *
      * @param image
-     * @param width
-     * @param height
      * @return
      */
-    public static BufferedImage resizeImage(final Image image, int width,
-                                            int height) {
-        final BufferedImage bufferedImage = new BufferedImage(width, height,
+    public static BufferedImage resizeImage(final Image image) {
+        final BufferedImage bufferedImage = new BufferedImage((int)xBlockSize, (int)yBlockSize,
                 BufferedImage.TYPE_INT_RGB);
         final Graphics2D graphics2D = bufferedImage.createGraphics();
         graphics2D.setComposite(AlphaComposite.Src);
-        graphics2D.drawImage(image, 0, 0, width, height, null);
+        graphics2D.drawImage(image, 0, 0, (int)xBlockSize, (int)yBlockSize, null);
         graphics2D.dispose();
 
         return bufferedImage;

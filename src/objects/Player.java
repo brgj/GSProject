@@ -1,4 +1,6 @@
-package character;
+package objects;
+
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.awt.image.BufferedImage;
 
@@ -10,17 +12,15 @@ import java.awt.image.BufferedImage;
  * To change this template use File | Settings | File Templates.
  */
 public class Player extends Entity {
-    Input delegate;
 
-    public Player(BufferedImage img, Input input) {
-        super(img);
-        delegate = input;
+    public Player() {
+        super(Thing.playerImg);
         x = 1;
         y = 1;
     }
 
-    public void move() {
-        switch (delegate.getMovement(x, y)) {
+    public void move(int direction) {
+        switch (direction) {
             // Left
             case 1:
                 x--;
@@ -37,5 +37,9 @@ public class Player extends Entity {
             case 4:
                 y++;
         }
+    }
+
+    public Bomb setBomb() {
+        throw new NotImplementedException();
     }
 }

@@ -1,4 +1,4 @@
-package character;
+package helpers;
 
 /**
  * Created with IntelliJ IDEA.
@@ -7,7 +7,9 @@ package character;
  * Time: 9:37 PM
  * To change this template use File | Settings | File Templates.
  */
-public interface Input {
+public interface Delegate {
 
-    public int getMovement(int x, int y);
+    public int getInput();
+
+    public void repaint();
 }
