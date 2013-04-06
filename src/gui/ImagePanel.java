@@ -39,13 +39,9 @@ public class ImagePanel extends JPanel {
     }
 
     public ImagePanel(int[][] map) {
-        image = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
+        this();
 
         initComponents(map);
-
-        setPreferredSize(new Dimension(WIDTH, HEIGHT));
-        setFocusable(true);
-        requestFocusInWindow();
     }
 
     private void initComponents(int[][] map) {
