@@ -11,7 +11,7 @@ import java.util.HashSet;
  * Time: 6:45 PM
  */
 public class Enemy extends Entity {
-    private ArrayList<Point> ClosedSet;
+    private HashSet<Point> ClosedSet;
     private HashSet<Point> DangerPath;
 
     public Enemy(int x, int y) {
@@ -82,7 +82,7 @@ public class Enemy extends Entity {
     }
 
     public int calcPath(int pX, int pY, int firePower, int[][] map) {
-        ClosedSet = new ArrayList<Point>();
+        ClosedSet = new HashSet<Point>();
         DangerPath = new HashSet<Point>();
         ArrayList<Point> openSet = new ArrayList<Point>();
         int[][] GScore = new int[map.length][map[0].length];
