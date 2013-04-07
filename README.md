@@ -4,7 +4,7 @@
 
 *Exception: Enemies can't enter the same square as each other and they have a value of -2.*
 
--2: Enemy
+-2: Enemy/Explosion
 
 -1: Player
 
