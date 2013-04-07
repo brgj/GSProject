@@ -68,7 +68,9 @@ public class Window extends JFrame {
             Thing.playerImg = ImageIO.read(getClass().getResource("/images/Player.jpg"));
             Thing.deadImg = ImageIO.read(getClass().getResource("/images/Player.jpg"));
             Thing.enemyImg = ImageIO.read(getClass().getResource("/images/Enemy.jpg"));
-            Thing.bombImg = ImageIO.read(getClass().getResource("/images/bomb.gif"));
+            Thing.bomb1Img = ImageIO.read(getClass().getResource("/images/bomb1.png"));
+            Thing.bomb2Img = ImageIO.read(getClass().getResource("/images/bomb2.png"));
+            Thing.bomb3Img = ImageIO.read(getClass().getResource("/images/bomb3.png"));
             Thing.explosionImg = ImageIO.read(getClass().getResource("/images/explosion.gif"));
         } catch (IOException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.

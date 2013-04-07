@@ -1,5 +1,7 @@
 package objects;
 
+import helpers.Helper;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -16,15 +18,31 @@ import java.util.List;
  */
 public class Bomb extends Item {
     Timer t;
+    BombType bt;
 
     public Bomb(int fuse, int x, int y) {
-        super(Thing.bombImg);
+        super(Thing.bomb1Img);
         this.x = x;
         this.y = y;
-        t = new Timer(fuse, new ActionListener() {
+        bt = BombType.Bomb1;
+        t = new Timer(fuse / 3, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                destroyed = true;
+                switch (bt) {
+                    case Bomb1:
+                        bt = BombType.Bomb2;
+                        sprite = Helper.resizeImage(bomb2Img);
+                        t.start();
+                        break;
+                    case Bomb2:
+                        bt = BombType.Bomb3;
+                        sprite = Helper.resizeImage(bomb3Img);
+                        t.start();
+                        break;
+                    case Bomb3:
+                        destroyed = true;
+                        break;
+                }
             }
         });
 
@@ -50,5 +68,11 @@ public class Bomb extends Item {
             points.add(new Point(x, y + 1));
 
         return points;
+    }
+
+    enum BombType {
+        Bomb1,
+        Bomb2,
+        Bomb3
     }
 }
