@@ -15,13 +15,13 @@ public class Explosion extends Item {
     Timer t;
 
     public Explosion(int x, int y) {
-        super(Thing.explosionImg);
-        this.x = x;
-        this.y = y;
+        super(Thing.explosionImg, x, y);
         t = new Timer(250, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 destroyed = true;
+                t.stop();
+                t = null;
             }
         });
 

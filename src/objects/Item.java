@@ -10,7 +10,9 @@ import java.awt.image.BufferedImage;
  * To change this template use File | Settings | File Templates.
  */
 public abstract class Item extends Thing {
-    public Item(BufferedImage img) {
+    public Item(BufferedImage img, int x, int y) {
         super(img);
+        this.x = x;
+        this.y = y;
     }
 }

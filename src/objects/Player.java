@@ -15,6 +15,7 @@ public class Player extends Entity {
         y = 0;
     }
 
+    @Override
     public void move(int direction) {
         switch (direction) {
             // Left

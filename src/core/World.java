@@ -7,6 +7,7 @@ import objects.*;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 /**
  * Created with IntelliJ IDEA.
@@ -23,6 +24,7 @@ public class World implements Runnable {
     private List<Enemy> enemies;
     private List<Bomb> bombs;
     private List<Explosion> explosions;
+    private List<Powerup> powerups;
     private int enemyMoveCounter;
 
     public World(int[][] m, Delegate d) {
@@ -31,6 +33,7 @@ public class World implements Runnable {
         enemies = new ArrayList<Enemy>();
         bombs = new ArrayList<Bomb>();
         explosions = new ArrayList<Explosion>();
+        powerups = new ArrayList<Powerup>();
         exists = true;
         enemyMoveCounter = 0;
         setPlayer();
@@ -79,6 +82,15 @@ public class World implements Runnable {
         explosions.add(e);
     }
 
+    public List<Powerup> getPowerups() {
+        return powerups;
+    }
+
+    public void addPowerup(Powerup p) {
+        p.sprite = Helper.resizeImage(p.sprite);
+        powerups.add(p);
+    }
+
     public void playerAction(int action, int[][] activeMap) {
         int y = player.getY();
         int x = player.getX();
@@ -114,7 +126,9 @@ public class World implements Runnable {
                 break;
             // Bomb
             case 5:
-                addBomb(player.setBomb());
+                Bomb b = player.setBomb();
+                if(b != null)
+                    addBomb(b);
                 break;
         }
     }
@@ -166,11 +180,20 @@ public class World implements Runnable {
                 activeMap[y + 1][x] = -2;
                 return;
         }
-        addBomb(enemy.setBomb());
+        Bomb b = enemy.setBomb();
+        if(b !=  null)
+            addBomb(b);
     }
 
     public void explode(List<Point> points) {
         for (Point p : points) {
+            if(map[p.y][p.x] > 0) {
+                Random rand = new Random();
+                int choice = rand.nextInt(16);
+                if(choice < 2) {
+                    addPowerup(new Powerup(choice, p.x, p.y));
+                }
+            }
             map[p.y][p.x] = 0;
             addExplosion(new Explosion(p.x, p.y));
         }
@@ -217,6 +240,19 @@ public class World implements Runnable {
             }
         }
 
+        for(int i = 0; i < powerups.size(); i++) {
+            Powerup p = powerups.get(i);
+            if(p.getX() == player.getX() && p.getY() == player.getY()) {
+                if(p.getPower() == Powerup.Power.FireUp) {
+                    player.firePower++;
+                } else {
+                    player.numBombs++;
+                }
+                powerups.remove(i);
+                i--;
+            }
+        }
+
         playerAction(delegate.getInput(), activeMap);
 
         if (enemyMoveCounter == 10) {
@@ -228,7 +264,7 @@ public class World implements Runnable {
                     i--;
                     continue;
                 }
-                enemyAction(e, e.calcPath(player.getX(), player.getY(), activeMap), activeMap);
+                enemyAction(e, e.calcPath(player.getX(), player.getY(), player.firePower, activeMap), activeMap);
             }
         }
 

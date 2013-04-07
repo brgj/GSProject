@@ -10,9 +10,8 @@ import java.util.ArrayList;
  * Time: 6:45 PM
  */
 public class Enemy extends Entity {
-
     private ArrayList<Point> ClosedSet;
-    public Bomb bomb;
+    private int[][] GScore;
 
     public Enemy(int x, int y) {
         super(Thing.enemyImg);
@@ -20,11 +19,11 @@ public class Enemy extends Entity {
         this.y = y;
     }
 
-    private int getHScore(Point current, Point goal){
+    private int getHScore(Point current, Point goal) {
         return Math.abs(goal.x - current.x) + Math.abs(goal.y - current.y);
     }
 
-    private Point findLowestFScore(ArrayList<Point> openSet, int[][] fscore){
+    private Point findLowestFScore(ArrayList<Point> openSet, int[][] fscore) {
         Point result = new Point();
         int lowestScore = Integer.MAX_VALUE;
         for (Point p : openSet) {
@@ -36,76 +35,82 @@ public class Enemy extends Entity {
         return result;
     }
 
-    private Point reconstructPath(Point[][] cameFrom, Point currentPos){
+    private Point reconstructPath(Point[][] cameFrom, Point currentPos) {
         Point previous = cameFrom[currentPos.y][currentPos.x];
-        if(previous != null && cameFrom[previous.y][previous.x] != null){
+        if (previous != null && cameFrom[previous.y][previous.x] != null) {
             return reconstructPath(cameFrom, previous);
-        }
-        else{
+        } else {
             return currentPos;
         }
     }
 
-    private int findDirection(Point start, Point step){
-        if((step.y-1) == start.y) return 4;
-        if((step.y+1) == start.y) return 2;
-        if((step.x-1) == start.x) return 3;
-        if((step.x+1) == start.x) return 1;
+    private int findDirection(Point start, Point step) {
+        if ((step.y - 1) == start.y) return 4;
+        if ((step.y + 1) == start.y) return 2;
+        if ((step.x - 1) == start.x) return 3;
+        if ((step.x + 1) == start.x) return 1;
         else return 0;
     }
 
-    private void initializeValues(int[][] map, boolean hasBomb){
-        for(int y = 0; y < map.length; y++){
-            for(int x= 0; x < map[0].length; x++){
-                if(!hasBomb && map[y][x] > 0)
+    private void initializeValues(int[][] map, int firePower, boolean hasBomb) {
+        for (int y = 0; y < map.length; y++) {
+            for (int x = 0; x < map[0].length; x++) {
+                if (!hasBomb && map[y][x] > 0)
                     ClosedSet.add(new Point(x, y));
-                if(map[y][x] == 6)
-                    addClosedBlock(x, y);
+                if (map[y][x] == 6)
+                    addClosedBlock(x, y, firePower);
             }
         }
     }
 
-    private void addClosedBlock(int x, int y) {
-        ClosedSet.add(new Point(x + 1, y));
-        ClosedSet.add(new Point(x - 1, y));
-        ClosedSet.add(new Point(x, y + 1));
-        ClosedSet.add(new Point(x, y - 1));
+    private void addClosedBlock(int x, int y, int firePower) {
+        for (int i = 1; i <= firePower; i++) {
+            if (x < GScore[0].length - i) {
+                ClosedSet.add(new Point(x + i, y));
+                GScore[y][x + i] = 5;
+            }
+            if (x >= i) {
+                ClosedSet.add(new Point(x - i, y));
+                GScore[y][x - i] = 5;
+            }
+            if (y < GScore.length - i) {
+                ClosedSet.add(new Point(x, y + i));
+                GScore[y + i][x] = 5;
+            }
+            if (y >= i) {
+                ClosedSet.add(new Point(x, y - i));
+                GScore[y - i][x] = 5;
+            }
+        }
     }
 
-    public int calcPath(int pX, int pY, int[][] map) {
-        ClosedSet               = new ArrayList<Point>();
+    public int calcPath(int pX, int pY, int firePower, int[][] map) {
+        ClosedSet = new ArrayList<Point>();
         ArrayList<Point> openSet = new ArrayList<Point>();
-        int[][] GScore          = new int[map.length][map[0].length];
-        int[][] FScore          = new int[map.length][map[0].length];
-        Point[][] CameFrom      = new Point[map.length][map[0].length];
+        GScore = new int[map.length][map[0].length];
+        int[][] FScore = new int[map.length][map[0].length];
+        Point[][] CameFrom = new Point[map.length][map[0].length];
         Point start = new Point(this.x, this.y);
         Point goal = new Point(pX, pY);
         Point current = start;
 
-        if(bomb != null) {
-            if(bomb.isDestroyed()) {
-                bomb = null;
-            }
-        }
-
-        initializeValues(map, bomb == null);
+        initializeValues(map, firePower, checkBombs());
 
         openSet.add(start);
         int currentGScore = 0;
         FScore[start.y][start.x] = getHScore(start, goal);
 
-        while(!openSet.isEmpty())
-        {
+        while (!openSet.isEmpty()) {
             current = findLowestFScore(openSet, FScore);
 
-            if(current.equals(goal)){
+            if (current.equals(goal)) {
                 return findDirection(start, reconstructPath(CameFrom, current));
             }
             openSet.remove(openSet.indexOf(current));       // Removes the current point
             ClosedSet.add(new Point(current));
 
-            Point[] neighbours = {new Point(current.x-1, current.y), new Point(current.x, current.y - 1)
-                    , new Point(current.x + 1, current.y), new Point(current.x, current.y+1)};
+            Point[] neighbours = {new Point(current.x - 1, current.y), new Point(current.x, current.y - 1)
+                    , new Point(current.x + 1, current.y), new Point(current.x, current.y + 1)};
             for (Point neighbour : neighbours) {
                 if ((neighbour.x >= 0 && neighbour.x < map[0].length)
                         && (neighbour.y >= 0 && neighbour.y < map.length)) {
@@ -150,9 +155,4 @@ public class Enemy extends Entity {
         }
     }
 
-    @Override
-    public Bomb setBomb() {
-        bomb = new Bomb(1000, x, y);
-        return bomb;
-    }
 }

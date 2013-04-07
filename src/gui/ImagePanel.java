@@ -152,6 +152,10 @@ public class ImagePanel extends JPanel {
         if (world == null)
             return;
 
+        for(Powerup pow : world.getPowerups()) {
+            g.drawImage(pow.sprite, (int) (pow.getX() * Helper.xBlockSize + 0.5), (int) (pow.getY() * Helper.yBlockSize + 0.5), null);
+        }
+
         Player p = world.getPlayer();
         g.drawImage(p.sprite, (int) (p.getX() * Helper.xBlockSize + 0.5), (int) (p.getY() * Helper.yBlockSize + 0.5), null);
 

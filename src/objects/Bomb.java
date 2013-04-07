@@ -17,13 +17,13 @@ import java.util.List;
  * To change this template use File | Settings | File Templates.
  */
 public class Bomb extends Item {
-    Timer t;
-    BombType bt;
+    private Timer t;
+    private BombType bt;
+    private int firePower;
 
-    public Bomb(int fuse, int x, int y) {
-        super(Thing.bomb1Img);
-        this.x = x;
-        this.y = y;
+    public Bomb(int fuse, int fp, int x, int y) {
+        super(Thing.bomb1Img, x, y);
+        firePower = fp;
         bt = BombType.Bomb1;
         t = new Timer(fuse / 3, new ActionListener() {
             @Override
@@ -41,6 +41,8 @@ public class Bomb extends Item {
                         break;
                     case Bomb3:
                         destroyed = true;
+                        t.stop();
+                        t = null;
                         break;
                 }
             }
@@ -55,17 +57,19 @@ public class Bomb extends Item {
 
         points.add(new Point(x, y));
 
-        if (x != 0)
-            points.add(new Point(x - 1, y));
+        for(int i = 1; i <= firePower; i++) {
+            if (x >= i)
+                points.add(new Point(x - i, y));
 
-        if (x != maxX)
-            points.add(new Point(x + 1, y));
+            if (x <= maxX - i)
+                points.add(new Point(x + i, y));
 
-        if (y != 0)
-            points.add(new Point(x, y - 1));
+            if (y >= i)
+                points.add(new Point(x, y - i));
 
-        if (y != maxY)
-            points.add(new Point(x, y + 1));
+            if (y <= maxY - i)
+                points.add(new Point(x, y + i));
+        }
 
         return points;
     }

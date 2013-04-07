@@ -17,6 +17,8 @@ public abstract class Thing {
     public static BufferedImage bomb2Img;
     public static BufferedImage bomb3Img;
     public static BufferedImage explosionImg;
+    public static BufferedImage bombUpImg;
+    public static BufferedImage fireUpImg;
 
     public BufferedImage sprite;
     protected int x, y;
