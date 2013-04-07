@@ -33,6 +33,7 @@ public class World implements Runnable{
         explosions = new ArrayList<Explosion>();
         exists = true;
         setPlayer();
+        addEnemy(new Enemy());
     }
 
     public Player getPlayer() {
