@@ -35,6 +35,8 @@ public class World implements Runnable {
         enemyMoveCounter = 0;
         setPlayer();
         addEnemy(new Enemy(map.length - 2, map[0].length - 2));
+        addEnemy(new Enemy(1, map[0].length - 2));
+        addEnemy(new Enemy(map.length - 2, 1));
     }
 
     public Player getPlayer() {
