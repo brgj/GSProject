@@ -21,8 +21,8 @@ public class Enemy extends Entity {
     public Enemy() {
         super(Thing.enemyImg);
         //TODO: change this later
-        x = 3;
-        y = 3;
+        x = 19;
+        y = 19;
     }
 
     private int getHScore(Point current, Point goal){
