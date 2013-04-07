@@ -68,7 +68,7 @@ public class Enemy extends Entity {
         }
     }
 
-    public int calcPath(int[][] map) {
+    public int calcPath(int pX, int pY, int[][] map) {
 
         ClosedSet               = new ArrayList<Point>();
         OpenSet                 = new ArrayList<Point>();
@@ -76,7 +76,7 @@ public class Enemy extends Entity {
         int[][] FScore          = new int[map.length][map[0].length];
         Point[][] CameFrom      = new Point[map.length][map[0].length];
         start                   = new Point(this.x,this.y);
-        goal                    = new Point(1,1); // TODO: set this to where the player is in the map.
+        goal                    = new Point(pX,pY); // TODO: set this to where the player is in the map.
         Point current;
         initializeValues(map);
 

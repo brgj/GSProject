@@ -176,7 +176,7 @@ public class World implements Runnable {
                     i--;
                     continue;
                 }
-                e.move(e.calcPath(activeMap));
+                e.move(e.calcPath(player.getX(), player.getY(), activeMap));
             }
         }
 
