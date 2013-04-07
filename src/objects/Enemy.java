@@ -59,12 +59,12 @@ public class Enemy extends Entity {
                 if (!hasBomb && map[y][x] > 0)
                     ClosedSet.add(new Point(x, y));
                 if (map[y][x] == 6)
-                    addAvoidancePath(x, y, firePower, map[0].length - 1, map.length - 1);
+                    addDangerPath(x, y, firePower, map[0].length - 1, map.length - 1);
             }
         }
     }
 
-    private void addAvoidancePath(int x, int y, int firePower, int maxX, int maxY) {
+    private void addDangerPath(int x, int y, int firePower, int maxX, int maxY) {
         for (int i = 1; i <= firePower; i++) {
             if (x <= maxX - i) {
                 DangerPath.add(new Point(x + i, y));
@@ -96,7 +96,7 @@ public class Enemy extends Entity {
         initializeValues(map, firePower, checkBombs());
 
         // Sets the bomb priority according to whether or not the enemy is currently inside of a dangerPath.
-        bombPriority = DangerPath.contains(new Point(pX, pY)) ? 100 : 7;
+        bombPriority = DangerPath.contains(new Point(x, y)) ? 100 : 7;
 
         openSet.add(start);
         int currentGScore = 0;

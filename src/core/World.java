@@ -187,7 +187,7 @@ public class World implements Runnable {
 
     public void explode(List<Point> points) {
         for (Point p : points) {
-            if(map[p.y][p.x] > 0) {
+            if(map[p.y][p.x] == 1) {
                 Random rand = new Random();
                 int choice = rand.nextInt(16);
                 if(choice < 2) {
@@ -232,7 +232,7 @@ public class World implements Runnable {
 
         for (int i = 0; i < bombs.size(); i++) {
             Bomb b = bombs.get(i);
-            if (b.isDestroyed()) {
+            if (b.isDestroyed() || activeMap[b.getY()][b.getX()] == -3) {
                 mapChanged = true;
                 explode(b.blowUp(map[0].length - 1, map.length - 1));
                 bombs.remove(i);
