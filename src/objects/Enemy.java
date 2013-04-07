@@ -2,6 +2,7 @@ package objects;
 
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.HashSet;
 
 /**
  * Created with IntelliJ IDEA.
@@ -11,7 +12,7 @@ import java.util.ArrayList;
  */
 public class Enemy extends Entity {
     private ArrayList<Point> ClosedSet;
-    private int[][] GScore;
+    private HashSet<Point> DangerPath;
 
     public Enemy(int x, int y) {
         super(Thing.enemyImg);
@@ -58,43 +59,44 @@ public class Enemy extends Entity {
                 if (!hasBomb && map[y][x] > 0)
                     ClosedSet.add(new Point(x, y));
                 if (map[y][x] == 6)
-                    addClosedBlock(x, y, firePower);
+                    addAvoidancePath(x, y, firePower, map[0].length - 1, map.length - 1);
             }
         }
     }
 
-    private void addClosedBlock(int x, int y, int firePower) {
+    private void addAvoidancePath(int x, int y, int firePower, int maxX, int maxY) {
         for (int i = 1; i <= firePower; i++) {
-            if (x < GScore[0].length - i) {
-                ClosedSet.add(new Point(x + i, y));
-                GScore[y][x + i] = 5;
+            if (x <= maxX - i) {
+                DangerPath.add(new Point(x + i, y));
             }
             if (x >= i) {
-                ClosedSet.add(new Point(x - i, y));
-                GScore[y][x - i] = 5;
+                DangerPath.add(new Point(x - i, y));
             }
-            if (y < GScore.length - i) {
-                ClosedSet.add(new Point(x, y + i));
-                GScore[y + i][x] = 5;
+            if (y <= maxY - i) {
+                DangerPath.add(new Point(x, y + i));
             }
             if (y >= i) {
-                ClosedSet.add(new Point(x, y - i));
-                GScore[y - i][x] = 5;
+                DangerPath.add(new Point(x, y - i));
             }
         }
     }
 
     public int calcPath(int pX, int pY, int firePower, int[][] map) {
         ClosedSet = new ArrayList<Point>();
+        DangerPath = new HashSet<Point>();
         ArrayList<Point> openSet = new ArrayList<Point>();
-        GScore = new int[map.length][map[0].length];
+        int[][] GScore = new int[map.length][map[0].length];
         int[][] FScore = new int[map.length][map[0].length];
         Point[][] CameFrom = new Point[map.length][map[0].length];
         Point start = new Point(this.x, this.y);
         Point goal = new Point(pX, pY);
         Point current = start;
+        int bombPriority;
 
         initializeValues(map, firePower, checkBombs());
+
+        // Sets the bomb priority according to whether or not the enemy is currently inside of a dangerPath.
+        bombPriority = DangerPath.contains(new Point(pX, pY)) ? 100 : 7;
 
         openSet.add(start);
         int currentGScore = 0;
@@ -114,8 +116,14 @@ public class Enemy extends Entity {
             for (Point neighbour : neighbours) {
                 if ((neighbour.x >= 0 && neighbour.x < map[0].length)
                         && (neighbour.y >= 0 && neighbour.y < map.length)) {
-                    // Set distance between to +7 in case of wall, else 1.
-                    int distance = map[neighbour.y][neighbour.x] > 0 ? 7 : 1;
+                    // Set distance between to +bombPriority if there's a wall that can be blown up,
+                    // 33 if it's an explosion path, else 1.
+                    int distance;
+                    if(DangerPath.contains(neighbour)) {
+                        distance = 33;
+                    } else {
+                        distance = map[neighbour.y][neighbour.x] > 0 ? bombPriority : 1;
+                    }
                     currentGScore = GScore[current.y][current.x] + distance;
 
                     if (ClosedSet.contains(neighbour) && currentGScore >= GScore[neighbour.y][neighbour.x]) {
