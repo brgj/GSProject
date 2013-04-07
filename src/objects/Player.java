@@ -11,8 +11,8 @@ public class Player extends Entity {
 
     public Player() {
         super(Thing.playerImg);
-        x = 1;
-        y = 1;
+        x = 0;
+        y = 0;
     }
 
     public void move(int direction) {

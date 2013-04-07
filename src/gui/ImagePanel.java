@@ -24,9 +24,10 @@ public class ImagePanel extends JPanel {
     private static final int HEIGHT = 500;
 
     private BufferedImage image;
-    World world;
-    Thread wThread;
-    Stack<Integer> keyStack;
+    private World world;
+    private Thread wThread;
+    private Stack<Integer> keyStack;
+    private int groundColour, wallColour;
 
     public ImagePanel() {
         image = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
@@ -36,8 +37,11 @@ public class ImagePanel extends JPanel {
         requestFocusInWindow();
     }
 
-    public ImagePanel(int[][] map) {
+    public ImagePanel(int[][] map, int groundClr, int wallClr) {
         this();
+
+        groundColour = groundClr;
+        wallColour = wallClr;
 
         initComponents(map);
     }
@@ -127,34 +131,22 @@ public class ImagePanel extends JPanel {
 
     public int getColour(int index) {
         switch (index) {
-            // White
+            // Ground
             case 0:
-                return 0xFFFFFF;
-            // Black
+                return groundColour;
+            // Wall
             case 1:
-                return 0;
-            // Red
-            case 2:
-                return 0xFF0000;
-            // Green
-            case 3:
-                return 0x00FF00;
-            // Blue
-            case 4:
-                return 0x0000FF;
-            // Stupid colour
-            case 5:
-                return 0x5EDA9E;
-            // White for bombs
+                return wallColour;
+            // Bomb colour same as ground colour
             case 6:
-                return 0xFFFFFF;
+                return groundColour;
             default:
-                return 0;
+                return wallColour;
         }
     }
 
     @Override
-    public void paint(Graphics g) {
+    public void paintComponent(Graphics g) {
         g.drawImage(image, 0, 0, null);
 
         if (world == null)
@@ -174,5 +166,6 @@ public class ImagePanel extends JPanel {
         for(Explosion e : world.getExplosions()) {
             g.drawImage(e.sprite, (int) (e.getX() * Helper.xBlockSize + 0.5), (int) (e.getY() * Helper.yBlockSize + 0.5), null);
         }
+
     }
 }

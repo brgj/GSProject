@@ -38,7 +38,7 @@ public class Window extends JFrame {
 
         menubar = new JMenuBar();
         file = new JMenu("File");
-        loadMap = new JMenuItem("Load Map");
+        loadMap = new JMenuItem("Load Map...");
 
         fileChooser = new JFileChooser();
 
@@ -65,11 +65,11 @@ public class Window extends JFrame {
         add(imagePanel);
 
         try {
-            Thing.playerImg = ImageIO.read(getClass().getResource("/images/abc.jpeg"));
-            Thing.deadImg = ImageIO.read(getClass().getResource("/images/def.jpeg"));
-            Thing.enemyImg = ImageIO.read(getClass().getResource("/images/jkl.jpeg"));
-            Thing.bombImg = ImageIO.read(getClass().getResource("/images/bomb.png"));
-            Thing.explosionImg = ImageIO.read(getClass().getResource("/images/explosion.png"));
+            Thing.playerImg = ImageIO.read(getClass().getResource("/images/Player.jpg"));
+            Thing.deadImg = ImageIO.read(getClass().getResource("/images/Player.jpg"));
+            Thing.enemyImg = ImageIO.read(getClass().getResource("/images/Enemy.jpg"));
+            Thing.bombImg = ImageIO.read(getClass().getResource("/images/bomb.gif"));
+            Thing.explosionImg = ImageIO.read(getClass().getResource("/images/explosion.gif"));
         } catch (IOException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
             return;
@@ -97,8 +97,12 @@ public class Window extends JFrame {
     public void createMap(File file) throws IOException {
         ArrayList<int[]> mapList = new ArrayList<int[]>();
         Scanner scan = new Scanner(file, "UTF-8");
+        int wallColour;
+        int groundColour;
         while (scan.hasNext()) {
             String str = scan.nextLine();
+            if(str.equals("*"))
+                break;
             Scanner line = new Scanner(str);
             int[] buffer = new int[str.length()];
             int i = 0;
@@ -114,13 +118,21 @@ public class Window extends JFrame {
             mapList.add(row);
         }
 
+        if(scan.hasNext()) {
+            groundColour = Integer.parseInt(scan.next(), 16);
+            wallColour = Integer.parseInt(scan.next(), 16);
+        } else {
+            groundColour = 0xFFFFFF;
+            wallColour = 0;
+        }
+
         map = mapList.toArray(new int[0][]);
 
         // TODO: Destroy world before removing panel
 
         remove(imagePanel);
 
-        imagePanel = new ImagePanel(map);
+        imagePanel = new ImagePanel(map, groundColour, wallColour);
 
         add(imagePanel);
 
