@@ -1,9 +1,7 @@
 package objects;
 
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
-import java.util.*;
 import java.awt.*;
-import java.awt.image.BufferedImage;
+import java.util.ArrayList;
 
 /**
  * Created with IntelliJ IDEA.
@@ -14,15 +12,12 @@ import java.awt.image.BufferedImage;
 public class Enemy extends Entity {
 
     private ArrayList<Point> ClosedSet;
-    private ArrayList<Point> OpenSet;
-    private Point start;
-    private Point goal;
+    public Bomb bomb;
 
-    public Enemy() {
+    public Enemy(int x, int y) {
         super(Thing.enemyImg);
-        //TODO: change this later
-        x = 19;
-        y = 19;
+        this.x = x;
+        this.y = y;
     }
 
     private int getHScore(Point current, Point goal){
@@ -32,10 +27,10 @@ public class Enemy extends Entity {
     private Point findLowestFScore(ArrayList<Point> openSet, int[][] fscore){
         Point result = new Point();
         int lowestScore = Integer.MAX_VALUE;
-        for(int i = 0; i < openSet.size(); i++){
-            if(fscore[openSet.get(i).y][openSet.get(i).x] < lowestScore){
-                lowestScore = fscore[openSet.get(i).y][openSet.get(i).x];
-                result = openSet.get(i);
+        for (Point p : openSet) {
+            if (fscore[p.y][p.x] < lowestScore) {
+                lowestScore = fscore[p.y][p.x];
+                result = p;
             }
         }
         return result;
@@ -43,9 +38,8 @@ public class Enemy extends Entity {
 
     private Point reconstructPath(Point[][] cameFrom, Point currentPos){
         Point previous = cameFrom[currentPos.y][currentPos.x];
-        if(cameFrom[previous.y][previous.x] != null && previous != null){
-            Point r = reconstructPath(cameFrom, previous);
-            return r;
+        if(previous != null && cameFrom[previous.y][previous.x] != null){
+            return reconstructPath(cameFrom, previous);
         }
         else{
             return currentPos;
@@ -60,64 +54,84 @@ public class Enemy extends Entity {
         else return 0;
     }
 
-    private void initializeValues(int[][] map){
+    private void initializeValues(int[][] map, boolean hasBomb){
         for(int y = 0; y < map.length; y++){
             for(int x= 0; x < map[0].length; x++){
-                if(map[y][x] > 0) ClosedSet.add(new Point(x,y));
+                if(!hasBomb && map[y][x] > 0)
+                    ClosedSet.add(new Point(x, y));
+                if(map[y][x] == 6)
+                    addClosedBlock(x, y);
             }
         }
     }
 
-    public int calcPath(int pX, int pY, int[][] map) {
+    private void addClosedBlock(int x, int y) {
+        ClosedSet.add(new Point(x + 1, y));
+        ClosedSet.add(new Point(x + 1, y + 1));
+        ClosedSet.add(new Point(x + 1, y - 1));
+        ClosedSet.add(new Point(x - 1, y));
+        ClosedSet.add(new Point(x - 1, y + 1));
+        ClosedSet.add(new Point(x - 1, y - 1));
+        ClosedSet.add(new Point(x, y + 1));
+        ClosedSet.add(new Point(x, y - 1));
+    }
 
+    public int calcPath(int pX, int pY, int[][] map) {
         ClosedSet               = new ArrayList<Point>();
-        OpenSet                 = new ArrayList<Point>();
+        ArrayList<Point> openSet = new ArrayList<Point>();
         int[][] GScore          = new int[map.length][map[0].length];
         int[][] FScore          = new int[map.length][map[0].length];
         Point[][] CameFrom      = new Point[map.length][map[0].length];
-        start                   = new Point(this.x,this.y);
-        goal                    = new Point(pX,pY); // TODO: set this to where the player is in the map.
-        Point current;
-        initializeValues(map);
+        Point start = new Point(this.x, this.y);
+        Point goal = new Point(pX, pY);
+        Point current = start;
 
-        OpenSet.add(start);
+        if(bomb != null) {
+            if(bomb.isDestroyed()) {
+                bomb = null;
+            }
+        }
+
+        initializeValues(map, bomb == null);
+
+        openSet.add(start);
         int currentGScore = 0;
         FScore[start.x][start.y] = getHScore(start, goal);
 
-        while(!OpenSet.isEmpty())
+        while(!openSet.isEmpty())
         {
-            current = findLowestFScore(OpenSet, FScore);
+            current = findLowestFScore(openSet, FScore);
 
             if(current.equals(goal)){
                 return findDirection(start, reconstructPath(CameFrom, current));
             }
-            OpenSet.remove(OpenSet.indexOf(current));       // Removes the current point
+            openSet.remove(openSet.indexOf(current));       // Removes the current point
             ClosedSet.add(new Point(current));
 
             Point[] neighbours = {new Point(current.x-1, current.y), new Point(current.x, current.y - 1)
                     , new Point(current.x + 1, current.y), new Point(current.x, current.y+1)};
-            for(int i = 0; i < neighbours.length; i++)
-            {
-                if((neighbours[i].x >= 0 && neighbours[i].x < map[0].length)
-                        && (neighbours[i].y >= 0 && neighbours[i].y < map.length )){
-                    // This is a + 1 because we know that the distance between current and the neighbour is always one
-                    currentGScore = GScore[current.y][current.x] + 1;
+            for (Point neighbour : neighbours) {
+                if ((neighbour.x >= 0 && neighbour.x < map[0].length)
+                        && (neighbour.y >= 0 && neighbour.y < map.length)) {
+                    // Set distance between to +7 in case of wall, else 1.
+                    int distance = map[neighbour.y][neighbour.x] > 0 ? 7 : 1;
+                    currentGScore = GScore[current.y][current.x] + distance;
 
-                    if(ClosedSet.contains(neighbours[i]) && currentGScore >= GScore[neighbours[i].y][neighbours[i].x]){
+                    if (ClosedSet.contains(neighbour) && currentGScore >= GScore[neighbour.y][neighbour.x]) {
                         continue;
                     }
-                    if(!OpenSet.contains(neighbours[i]) || currentGScore < GScore[neighbours[i].y][neighbours[i].x]){
-                        CameFrom[neighbours[i].y][neighbours[i].x] = current;
-                        GScore[neighbours[i].y][neighbours[i].x] = currentGScore;
-                        FScore[neighbours[i].y][neighbours[i].x] = getHScore(neighbours[i],goal) + currentGScore;
-                        if(!OpenSet.contains(neighbours[i])){
-                            OpenSet.add(new Point(neighbours[i]));
+                    if (!openSet.contains(neighbour) || currentGScore < GScore[neighbour.y][neighbour.x]) {
+                        CameFrom[neighbour.y][neighbour.x] = current;
+                        GScore[neighbour.y][neighbour.x] = currentGScore;
+                        FScore[neighbour.y][neighbour.x] = getHScore(neighbour, goal) + currentGScore;
+                        if (!openSet.contains(neighbour)) {
+                            openSet.add(new Point(neighbour));
                         }
                     }
                 }
             }
         }
-        return 0;
+        return findDirection(start, reconstructPath(CameFrom, current));
     }
 
     public void move(int direction) {
@@ -138,5 +152,11 @@ public class Enemy extends Entity {
             case 4:
                 y++;
         }
+    }
+
+    @Override
+    public Bomb setBomb() {
+        bomb = new Bomb(1000, x, y);
+        return bomb;
     }
 }

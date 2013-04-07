@@ -34,7 +34,7 @@ public class World implements Runnable {
         exists = true;
         enemyMoveCounter = 0;
         setPlayer();
-        addEnemy(new Enemy());
+        addEnemy(new Enemy(map.length - 2, map[0].length - 2));
     }
 
     public Player getPlayer() {
@@ -81,7 +81,7 @@ public class World implements Runnable {
         int y = player.getY();
         int x = player.getX();
 
-        if (activeMap[y][x] == -2) {
+        if (activeMap[y][x] == -2 || activeMap[y][x] == -3) {
             player.kill();
             exists = false;
             player.sprite = Thing.deadImg;
@@ -117,6 +117,52 @@ public class World implements Runnable {
         }
     }
 
+    public void enemyAction(Enemy enemy, int action, int[][] activeMap) {
+        int y = enemy.getY();
+        int x = enemy.getX();
+
+        if (activeMap[y][x] == -3) {
+            enemy.kill();
+            return;
+        }
+
+        switch (action) {
+            // Left
+            case 1:
+                if (x == 0 || activeMap[y][x - 1] < -1)
+                    return;
+                if (activeMap[y][x - 1] > 0)
+                    break;
+                enemy.move(1);
+                return;
+            // Up
+            case 2:
+                if (y == 0 || activeMap[y - 1][x] < -1)
+                    return;
+                if (activeMap[y - 1][x] > 0)
+                    break;
+                enemy.move(2);
+                return;
+            // Right
+            case 3:
+                if (x == activeMap[y].length - 1 || activeMap[y][x + 1] < -1)
+                    return;
+                if (activeMap[y][x + 1] > 0)
+                    break;
+                enemy.move(3);
+                return;
+            // Down
+            case 4:
+                if (y == activeMap.length - 1 || activeMap[y + 1][x] < -1)
+                    return;
+                if (activeMap[y + 1][x] > 0)
+                    break;
+                enemy.move(4);
+                return;
+        }
+        addBomb(enemy.setBomb());
+    }
+
     public void explode(List<Point> points) {
         for (Point p : points) {
             map[p.y][p.x] = 0;
@@ -136,7 +182,7 @@ public class World implements Runnable {
         }
 
         for (Explosion e : explosions) {
-            activeMap[e.getY()][e.getX()] = -2;
+            activeMap[e.getY()][e.getX()] = -3;
         }
 
         return activeMap;
@@ -176,7 +222,7 @@ public class World implements Runnable {
                     i--;
                     continue;
                 }
-                e.move(e.calcPath(player.getX(), player.getY(), activeMap));
+                enemyAction(e, e.calcPath(player.getX(), player.getY(), activeMap), activeMap);
             }
         }
 
