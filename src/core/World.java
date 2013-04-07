@@ -62,7 +62,7 @@ public class World implements Runnable{
     // Resizes sprite to block size and adds item to list
     public void addBomb(Bomb b) {
         b.sprite = Helper.resizeImage(b.sprite);
-        map[b.getY()][b.getX()] = 1;
+        map[b.getY()][b.getX()] = 6;
         bombs.add(b);
     }
 

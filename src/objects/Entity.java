@@ -20,4 +20,8 @@ public abstract class Entity extends Thing {
     public void kill() {
         destroyed = true;
     }
+
+    public Bomb setBomb() {
+        return new Bomb(1000, x, y);
+    }
 }

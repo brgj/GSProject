@@ -34,8 +34,4 @@ public class Player extends Entity {
                 y++;
         }
     }
-
-    public Bomb setBomb() {
-        return new Bomb(1000, x, y);
-    }
 }

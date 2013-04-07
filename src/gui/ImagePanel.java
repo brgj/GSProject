@@ -145,6 +145,9 @@ public class ImagePanel extends JPanel {
             // Stupid colour
             case 5:
                 return 0x5EDA9E;
+            // White for bombs
+            case 6:
+                return 0xFFFFFF;
             default:
                 return 0;
         }
