@@ -136,6 +136,7 @@ public class World implements Runnable {
                 if (activeMap[y][x - 1] > 0)
                     break;
                 enemy.move(1);
+                activeMap[y][x - 1] = -2;
                 return;
             // Up
             case 2:
@@ -144,6 +145,7 @@ public class World implements Runnable {
                 if (activeMap[y - 1][x] > 0)
                     break;
                 enemy.move(2);
+                activeMap[y - 1][x] = -2;
                 return;
             // Right
             case 3:
@@ -152,6 +154,7 @@ public class World implements Runnable {
                 if (activeMap[y][x + 1] > 0)
                     break;
                 enemy.move(3);
+                activeMap[y][x + 1] = -2;
                 return;
             // Down
             case 4:
@@ -160,6 +163,7 @@ public class World implements Runnable {
                 if (activeMap[y + 1][x] > 0)
                     break;
                 enemy.move(4);
+                activeMap[y + 1][x] = -2;
                 return;
         }
         addBomb(enemy.setBomb());
