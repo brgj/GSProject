@@ -67,11 +67,7 @@ public class Enemy extends Entity {
 
     private void addClosedBlock(int x, int y) {
         ClosedSet.add(new Point(x + 1, y));
-        ClosedSet.add(new Point(x + 1, y + 1));
-        ClosedSet.add(new Point(x + 1, y - 1));
         ClosedSet.add(new Point(x - 1, y));
-        ClosedSet.add(new Point(x - 1, y + 1));
-        ClosedSet.add(new Point(x - 1, y - 1));
         ClosedSet.add(new Point(x, y + 1));
         ClosedSet.add(new Point(x, y - 1));
     }
@@ -96,7 +92,7 @@ public class Enemy extends Entity {
 
         openSet.add(start);
         int currentGScore = 0;
-        FScore[start.x][start.y] = getHScore(start, goal);
+        FScore[start.y][start.x] = getHScore(start, goal);
 
         while(!openSet.isEmpty())
         {
