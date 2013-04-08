@@ -11,7 +11,8 @@ import java.awt.image.BufferedImage;
  */
 public abstract class Thing {
     public static BufferedImage playerImg;
-    public static BufferedImage deadImg;
+    public static BufferedImage playerDeadImg;
+    public static BufferedImage enemyDeadImg;
     public static BufferedImage enemyImg;
     public static BufferedImage bomb1Img;
     public static BufferedImage bomb2Img;

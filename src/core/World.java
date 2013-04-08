@@ -98,7 +98,7 @@ public class World implements Runnable {
         if (activeMap[y][x] == -2 || activeMap[y][x] == -3) {
             player.kill();
             exists = false;
-            player.sprite = Thing.deadImg;
+            player.sprite = Thing.playerDeadImg;
             player.sprite = Helper.resizeImage(player.sprite);
             return;
         }
@@ -139,6 +139,8 @@ public class World implements Runnable {
 
         if (activeMap[y][x] == -3) {
             enemy.kill();
+            enemy.sprite = Thing.enemyDeadImg;
+            enemy.sprite = Helper.resizeImage(enemy.sprite);
             return;
         }
 

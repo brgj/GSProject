@@ -66,8 +66,9 @@ public class Window extends JFrame {
 
         try {
             Thing.playerImg = ImageIO.read(getClass().getResource("/images/Player.jpg"));
-            Thing.deadImg = ImageIO.read(getClass().getResource("/images/Player.jpg"));
+            Thing.playerDeadImg = ImageIO.read(getClass().getResource("/images/Player_Dead.jpg"));
             Thing.enemyImg = ImageIO.read(getClass().getResource("/images/Enemy.jpg"));
+            Thing.enemyDeadImg = ImageIO.read(getClass().getResource("/images/Enemy_Dead.jpg"));
             Thing.bomb1Img = ImageIO.read(getClass().getResource("/images/bomb1.png"));
             Thing.bomb2Img = ImageIO.read(getClass().getResource("/images/bomb2.png"));
             Thing.bomb3Img = ImageIO.read(getClass().getResource("/images/bomb3.png"));
