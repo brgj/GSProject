@@ -127,13 +127,13 @@ public class World implements Runnable {
             // Bomb
             case 5:
                 Bomb b = player.setBomb();
-                if(b != null)
+                if (b != null)
                     addBomb(b);
                 break;
         }
     }
 
-    public void enemyAction(Enemy enemy, int action, int[][] activeMap) {
+    public void enemyAction(Enemy enemy, int action, boolean enemyGo, int[][] activeMap) {
         int y = enemy.getY();
         int x = enemy.getX();
 
@@ -143,6 +143,9 @@ public class World implements Runnable {
             enemy.sprite = Helper.resizeImage(enemy.sprite);
             return;
         }
+
+        if(!enemyGo)
+            return;
 
         switch (action) {
             // Left
@@ -183,16 +186,16 @@ public class World implements Runnable {
                 return;
         }
         Bomb b = enemy.setBomb();
-        if(b !=  null)
+        if (b != null)
             addBomb(b);
     }
 
     public void explode(List<Point> points) {
         for (Point p : points) {
-            if(map[p.y][p.x] == 1) {
+            if (map[p.y][p.x] == 1) {
                 Random rand = new Random();
                 int choice = rand.nextInt(16);
-                if(choice < 2) {
+                if (choice < 2) {
                     addPowerup(new Powerup(choice, p.x, p.y));
                 }
             }
@@ -242,10 +245,10 @@ public class World implements Runnable {
             }
         }
 
-        for(int i = 0; i < powerups.size(); i++) {
+        for (int i = 0; i < powerups.size(); i++) {
             Powerup p = powerups.get(i);
-            if(p.getX() == player.getX() && p.getY() == player.getY()) {
-                if(p.getPower() == Powerup.Power.FireUp) {
+            if (p.getX() == player.getX() && p.getY() == player.getY()) {
+                if (p.getPower() == Powerup.Power.FireUp) {
                     player.firePower++;
                 } else {
                     player.numBombs++;
@@ -257,17 +260,19 @@ public class World implements Runnable {
 
         playerAction(delegate.getInput(), activeMap);
 
-        if (enemyMoveCounter == 10) {
+        boolean enemyGo = enemyMoveCounter == 10;
+
+        if(enemyGo)
             enemyMoveCounter = 0;
-            for (int i = 0; i < enemies.size(); i++) {
-                Enemy e = enemies.get(i);
-                if (e.isDestroyed()) {
-                    enemies.remove(i);
-                    i--;
-                    continue;
-                }
-                enemyAction(e, e.calcPath(player.getX(), player.getY(), player.firePower, activeMap), activeMap);
+
+        for (int i = 0; i < enemies.size(); i++) {
+            Enemy e = enemies.get(i);
+            if (e.isDestroyed()) {
+                enemies.remove(i);
+                i--;
+                continue;
             }
+            enemyAction(e, e.calcPath(player.getX(), player.getY(), player.firePower, activeMap), enemyGo, activeMap);
         }
 
         if (mapChanged)

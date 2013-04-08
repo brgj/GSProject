@@ -95,8 +95,8 @@ public class Enemy extends Entity {
 
         initializeValues(map, firePower, checkBombs());
 
-        // Sets the bomb priority according to whether or not the enemy is currently inside of a dangerPath.
-        bombPriority = DangerPath.contains(new Point(x, y)) ? 100 : 7;
+        // Sets the bomb priority according to whether or not the enemy is currently inside of a danger path.
+        bombPriority = DangerPath.contains(new Point(x, y)) ? 300 : 7;
 
         openSet.add(start);
         int currentGScore = 0;
@@ -117,10 +117,10 @@ public class Enemy extends Entity {
                 if ((neighbour.x >= 0 && neighbour.x < map[0].length)
                         && (neighbour.y >= 0 && neighbour.y < map.length)) {
                     // Set distance between to +bombPriority if there's a wall that can be blown up,
-                    // 33 if it's an explosion path, else 1.
+                    // 50 if it's an explosion path, else 1.
                     int distance;
                     if(DangerPath.contains(neighbour)) {
-                        distance = 33;
+                        distance = 50;
                     } else {
                         distance = map[neighbour.y][neighbour.x] > 0 ? bombPriority : 1;
                     }
