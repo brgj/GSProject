@@ -4,21 +4,13 @@
 
 *Exception: Enemies can't enter the same square as each other and they have a value of -2.*
 
--2: Enemy/Explosion
+-3: Explosion
 
--1: Player
+-2: Enemy
 
 0: Open Path
 
-1: Black Wall
-
-2: Red Wall
-
-3: Green Wall
-
-4: Blue Wall
-
-5: Aqua Wall
+1: Wall
 
 6: Bomb
 
