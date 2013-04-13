@@ -5,11 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created with IntelliJ IDEA.
- * User: brad
- * Date: 4/4/13
- * Time: 6:24 PM
- * To change this template use File | Settings | File Templates.
+ * The superclass of all entities.
+ * Initializes bombs and firepower and defines some useful methods.
  */
 public abstract class Entity extends Thing {
     private List<Bomb> activeBombs;

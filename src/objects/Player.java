@@ -1,11 +1,8 @@
 package objects;
 
 /**
- * Created with IntelliJ IDEA.
- * User: brad
- * Date: 4/4/13
- * Time: 6:48 PM
- * To change this template use File | Settings | File Templates.
+ * The Player class is used to define a user player.
+ * Player can move and set bombs.
  */
 public class Player extends Entity {
 

@@ -12,11 +12,7 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 /**
- * Created with IntelliJ IDEA.
- * User: brad
- * Date: 4/4/13
- * Time: 2:53 PM
- * To change this template use File | Settings | File Templates.
+ * The Frame that holds the ImagePanel and creates the interface of the game.
  */
 public class Window extends JFrame {
     int[][] map;
@@ -34,6 +30,9 @@ public class Window extends JFrame {
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
     }
 
+    /**
+     * Initializes the interface for use.
+     */
     public void initComponents() {
 
         menubar = new JMenuBar();
@@ -100,6 +99,11 @@ public class Window extends JFrame {
         pack();
     }
 
+    /**
+     * Creates a map based on the input file.
+     * @param file
+     * @throws IOException
+     */
     public void createMap(File file) throws IOException {
         ArrayList<int[]> mapList = new ArrayList<int[]>();
         Scanner scan = new Scanner(file, "UTF-8");
@@ -133,8 +137,6 @@ public class Window extends JFrame {
         }
 
         map = mapList.toArray(new int[0][]);
-
-        // TODO: Destroy world before removing panel
 
         remove(imagePanel);
 

@@ -10,15 +10,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created with IntelliJ IDEA.
- * User: brad
- * Date: 4/5/13
- * Time: 2:32 PM
- * To change this template use File | Settings | File Templates.
+ * The Bomb class creates a bomb with a timer.
+ * As the timer reaches the explosion point, it triggers the animation of the image.
+ * Sets a boolean if it explodes to notify the world to take the appropriate action to clean it up.
  */
 public class Bomb extends Item {
     private Timer t;
-    private BombType bt;
+    public BombType bt;
     private int firePower;
 
     public Bomb(int fuse, int fp, int x, int y) {
@@ -51,24 +49,49 @@ public class Bomb extends Item {
         t.start();
     }
 
-    public List<Point> blowUp(int maxX, int maxY) {
+    public List<Point> blowUp(int[][] map) {
+        int maxX = map[0].length - 1;
+        int maxY = map.length - 1;
+        boolean stopLeft = false;
+        boolean stopRight = false;
+        boolean stopUp = false;
+        boolean stopDown = false;
 
         List<Point> points = new ArrayList<Point>();
-
         points.add(new Point(x, y));
 
-        for(int i = 1; i <= firePower; i++) {
-            if (x >= i)
+        for (int i = 1; i <= firePower; i++) {
+            // Left
+            if (x >= i && !stopLeft) {
                 points.add(new Point(x - i, y));
+                if (map[y][x - i] == 1) {
+                    stopLeft = true;
+                }
+            }
 
-            if (x <= maxX - i)
+            // Right
+            if (x <= maxX - i && !stopRight) {
                 points.add(new Point(x + i, y));
+                if (map[y][x + i] == 1) {
+                    stopRight = true;
+                }
+            }
 
-            if (y >= i)
+            // Up
+            if (y >= i && !stopUp) {
                 points.add(new Point(x, y - i));
+                if (map[y - i][x] == 1) {
+                    stopUp = true;
+                }
+            }
 
-            if (y <= maxY - i)
+            // Down
+            if (y <= maxY - i && !stopDown) {
                 points.add(new Point(x, y + i));
+                if (map[y + i][x] == 1) {
+                    stopDown = true;
+                }
+            }
         }
 
         return points;

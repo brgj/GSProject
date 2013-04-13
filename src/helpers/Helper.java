@@ -4,11 +4,7 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 
 /**
- * Created with IntelliJ IDEA.
- * User: brad
- * Date: 4/5/13
- * Time: 2:02 AM
- * To change this template use File | Settings | File Templates.
+ * The Helper class holds the blocksize of the map and resizes entities to that size.
  */
 public class Helper {
 

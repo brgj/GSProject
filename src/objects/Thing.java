@@ -3,11 +3,8 @@ package objects;
 import java.awt.image.BufferedImage;
 
 /**
- * Created with IntelliJ IDEA.
- * User: brad
- * Date: 4/5/13
- * Time: 2:19 PM
- * To change this template use File | Settings | File Templates.
+ * Thing is the superclass of all non environment objects in the game.
+ * The images associated with each are defined here.
  */
 public abstract class Thing {
     public static BufferedImage playerImg;

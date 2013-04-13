@@ -3,11 +3,8 @@ package core;
 import gui.Window;
 
 /**
- * Created with IntelliJ IDEA.
- * User: brad
- * Date: 4/4/13
- * Time: 1:19 PM
- * To change this template use File | Settings | File Templates.
+ * Main entry point of the application.
+ * Creates the window and sets it to visible.
  */
 public class Main {
     public static void main(String[] args) {

@@ -13,11 +13,8 @@ import java.awt.image.BufferedImage;
 import java.util.Stack;
 
 /**
- * Created with IntelliJ IDEA.
- * User: brad
- * Date: 4/4/13
- * Time: 3:18 PM
- * To change this template use File | Settings | File Templates.
+ * The container that sits inside of the frame and handles the drawing of the game.
+ * Listens for input and stores keystrokes in a stack to be passed to the world.
  */
 public class ImagePanel extends JPanel {
     private static final int WIDTH = 500;

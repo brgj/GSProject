@@ -5,11 +5,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 /**
- * Created with IntelliJ IDEA.
- * User: brad
- * Date: 4/6/13
- * Time: 3:53 PM
- * To change this template use File | Settings | File Templates.
+ * The explosion class is used to spawn an explosion after a bomb blows up.
+ * The explosions last for 250 ms and will kill anything in the blast range.
  */
 public class Explosion extends Item {
     Timer t;
