@@ -236,7 +236,7 @@ public class World implements Runnable {
         return ((y != activeMap.length - 1 && activeMap[y + 1][x] == -2) ||
                 (y != 0 && activeMap[y - 1][x] == -2) ||
                 (x != activeMap[0].length - 1 && activeMap[y][x + 1] == -2) ||
-                (x != 0 & activeMap[y][x - 1] == -2));
+                (x != 0 && activeMap[y][x - 1] == -2));
     }
 
     /**

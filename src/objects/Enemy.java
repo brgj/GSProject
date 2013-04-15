@@ -134,7 +134,7 @@ public class Enemy extends Entity {
         int[][] FScore = new int[map.length][map[0].length];
         Point[][] CameFrom = new Point[map.length][map[0].length];
         Point start = new Point(this.x, this.y);
-        Point goal;
+        Point goal = new Point(pX, pY);
         Point current = start;
         boolean inDangerPath;
 
@@ -145,8 +145,6 @@ public class Enemy extends Entity {
         inDangerPath = DangerPath.containsKey(new Point(x, y));
 
         initializeValues(map, checkBombs(), inDangerPath);
-
-        goal = inDangerPath ? new Point(map[0].length - 1 - pX, map.length - 1 - pY) : new Point(pX, pY);
 
         openSet.add(start);
         int currentGScore;
